@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Movie From User</title>
+    <link rel="stylesheet" href="./css/deleteMovieFromUser.css">
+</head>
+<body>
+
+<h1>Delete Movie From User</h1>
+<form action="delete-user-movies" method="post">
+    <h2>Form Delete Movie From Watchlist Fields:</h2>
+
+    <div class="movie-from-user-form">
+        <label>User ID:</label>
+        <input type="number" name="user_id" required>
+    </div>
+
+    <div class="movie-from-user-form">
+        <label>Movie ID:</label>
+        <input type="number" name="movie_id" required>
+    </div>
+
+    <div class="movie-from-user-form">
+        <label>Submit Button:</label>
+        <button type="submit" class="submit-btn">Delete Movie from User</button>
+    </div>
+
+</form>
+
+</body>
+</html>

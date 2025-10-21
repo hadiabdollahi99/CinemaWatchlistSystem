@@ -1,0 +1,56 @@
+package servlet;
+
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.User;
+import repository.UserRepository;
+import repository.impl.UserRepositoryImpl;
+import service.UserService;
+import service.impl.UserServiceImpl;
+import util.PasswordUtil;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class LoginServlet extends HttpServlet {
+    private UserRepository userRepository;
+    private UserService userService;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        userRepository = new UserRepositoryImpl();
+        userService = new UserServiceImpl(userRepository);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.sendRedirect(req.getContextPath()+"/login.html");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
+        PrintWriter writer = resp.getWriter();
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        User user;
+        try {
+            user = userService.findByUserName(username);
+        }catch (IllegalArgumentException e){
+            writer.println("<h1 style=\"color:red\">"+e.getMessage()+"</h1>");
+            return;
+        }
+
+        if (PasswordUtil.verifyPassword(password,user.getPassword())){
+            HttpSession session = req.getSession();
+            session.setAttribute("user",user);
+            resp.sendRedirect(req.getContextPath()+"/user");
+        }
+
+
+    }
+}

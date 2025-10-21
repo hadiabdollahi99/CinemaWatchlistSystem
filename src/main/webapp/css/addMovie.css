@@ -1,8 +1,7 @@
 body {
-    background-color: #879cbc;
-    color: #333533;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    color: #333;
     line-height: 1.6;
-    font-style: italic;
 }
 
 h1,h2{

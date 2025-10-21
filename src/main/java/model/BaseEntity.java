@@ -23,6 +23,8 @@ public class BaseEntity<ID> implements Serializable {
     private Instant createdAt;
     private Instant updatedAt;
 
+    private String pictureUrl;
+
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();

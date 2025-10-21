@@ -20,6 +20,10 @@ public class User extends BaseEntity<Long> implements Serializable {
     private String username;
     private String email;
     private String password;
+    private String resetToken;
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)

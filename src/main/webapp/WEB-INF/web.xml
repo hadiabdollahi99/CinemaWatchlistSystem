@@ -67,9 +67,30 @@
     <servlet-name>AllMovieAdminServlet</servlet-name>
     <servlet-class>servlet.AllMovieAdminServlet</servlet-class>
   </servlet>
+  
+  
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>servlet.LogoutServlet</servlet-class>
+  </servlet>
+  
+  <servlet>
+    <servlet-name>EditMovieServlet</servlet-name>
+    <servlet-class>servlet.EditMovieServlet</servlet-class>
+  </servlet>
 
 
 <!-- ******************************************************************************** -->
+  
+  <servlet-mapping>
+    <servlet-name>EditMovieServlet</servlet-name>
+    <url-pattern>/edit-movie</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
   
   <servlet-mapping>
     <servlet-name>RegisterServlet</servlet-name>
@@ -131,6 +152,10 @@
     <servlet-name>DeleteUserMovieServlet</servlet-name>
     <url-pattern>/delete-user-movies</url-pattern>
   </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>login.html</welcome-file>
+  </welcome-file-list>
 
 
 </web-app>

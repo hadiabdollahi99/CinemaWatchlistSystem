@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Base64;
 
 @Setter
 @Getter
@@ -23,8 +24,6 @@ public class BaseEntity<ID> implements Serializable {
     private Instant createdAt;
     private Instant updatedAt;
 
-    private String pictureUrl;
-
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
@@ -35,5 +34,7 @@ public class BaseEntity<ID> implements Serializable {
     protected void OnUpdate() {
         updatedAt = Instant.now();
     }
+
+
 
 }

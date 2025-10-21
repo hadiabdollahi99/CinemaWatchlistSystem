@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.Role;
 import model.User;
 import repository.UserRepository;
 import repository.impl.UserRepositoryImpl;
@@ -46,9 +47,15 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (PasswordUtil.verifyPassword(password,user.getPassword())){
+            if (user.getRole() == Role.USER) {
+                HttpSession session = req.getSession();
+                session.setAttribute("user",user);
+                resp.sendRedirect(req.getContextPath()+"/user");
+                return;
+            }
             HttpSession session = req.getSession();
             session.setAttribute("user",user);
-            resp.sendRedirect(req.getContextPath()+"/user");
+            resp.sendRedirect(req.getContextPath()+"/admin");
         }
 
 

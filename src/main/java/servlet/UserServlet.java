@@ -36,29 +36,8 @@ public class UserServlet extends HttpServlet {
         writer.println("<h1><b>Welcome User " + user.getUsername() + ".</b></h1>");
         writer.println("<a href='edit-profile'>Edit Profile</a><br>");
         writer.println("<a href='movie-user'>All Movie User</a><br>");
-        writer.println("<a href='watchlist'>Watchlist</a>");
+        writer.println("<a href='watchlist'>Watchlist</a><br>");
+        writer.println("<a href='logout'>Logout</a>");
     }
-
-//    @Override
-//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        resp.setContentType("text/html");
-//        PrintWriter writer = resp.getWriter();
-//
-//        String username = req.getParameter("username");
-//        String email = req.getParameter("email");
-//        String password = req.getParameter("password");
-//        if (username == null || email == null || password == null) {
-//            writer.println("<h1 style='color: red'> username and email and password are required!</h1>");
-//            writer.println("<a href='index.jsp'>Go Back</a>");
-//            return;
-//        }
-//
-//        userService.saveOrUpdate(User.builder().username(username).email(email).password(password).build());
-//
-//
-//        writer.println("<h1 style='color: green'> <b>User registered successfully.</b> </h1>");
-//        writer.println("<a href='index.jsp'>Go Back</a>");
-//    }
-
 
 }

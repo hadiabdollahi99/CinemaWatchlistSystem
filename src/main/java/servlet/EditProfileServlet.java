@@ -2,10 +2,8 @@ package servlet;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.*;
 import model.User;
 import repository.UserRepository;
 import repository.impl.UserRepositoryImpl;
@@ -14,9 +12,15 @@ import service.impl.UserServiceImpl;
 import util.PasswordUtil;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
+@MultipartConfig(
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 10,
+        fileSizeThreshold = 1024 * 1024
+)
 public class EditProfileServlet extends HttpServlet {
     private UserRepository userRepository;
     private UserService userService;
@@ -237,6 +241,8 @@ public class EditProfileServlet extends HttpServlet {
         if (user.getProfilePictureBase64() != null) {
             out.println("            <img src='data:image/jpeg;base64," + user.getProfilePictureBase64() + "' " +
                     "alt='Profile Picture' class='profile-picture'>");
+//            <img src="data:image/jpeg;base64,${movie.posterImageBase64}" alt="Movie Poster">
+            //<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..." alt="Test Image">
         } else {
             out.println("            <div class='default-avatar'>");
             out.println("                No Picture Uploaded");
@@ -245,7 +251,7 @@ public class EditProfileServlet extends HttpServlet {
         out.println("        </div>");
 
 
-        out.println("        <form action='" + request.getContextPath() + "/edit-profile' method='post'>");
+        out.println("        <form action='" + request.getContextPath() + "/edit-profile' method='post' enctype='multipart/form-data'>");
         out.println("            ");
         out.println("            <div class='form-group'>");
         out.println("                <label for='username'>Username</label>");
@@ -316,27 +322,37 @@ public class EditProfileServlet extends HttpServlet {
             return;
         }
 
-        String username = req.getParameter("username");
-        String email = req.getParameter("email");
-        String pictureUrl = req.getParameter("pictureUrl");
-        byte[] profilePicture = pictureUrl.getBytes();
-        String currentPassword = req.getParameter("currentPassword");
-        String newPassword = req.getParameter("newPassword");
-        String confirmPassword = req.getParameter("confirmPassword");
+        Part usernamePart = req.getPart("username");
+        Part emailPart = req.getPart("email");
+        Part currentPasswordPart = req.getPart("currentPassword");
+        Part newPasswordPart = req.getPart("newPassword");
+        Part confirmPasswordPart = req.getPart("confirmPassword");
+        Part profilePicturePart = req.getPart("pictureUrl");
 
-        if (username != null && !username.isEmpty() && !username.equals(user.getUsername())) {
+        String username = new String(usernamePart.getInputStream().readAllBytes(), "UTF-8");
+        String email = new String(emailPart.getInputStream().readAllBytes(), "UTF-8");
+        String currentPassword = new String(currentPasswordPart.getInputStream().readAllBytes(), "UTF-8");
+        String newPassword = new String(newPasswordPart.getInputStream().readAllBytes(), "UTF-8");
+        String confirmPassword = new String(confirmPasswordPart.getInputStream().readAllBytes(), "UTF-8");
+
+        byte[] profilePicture = null;
+        if (profilePicturePart != null && profilePicturePart.getSize() > 0) {
+            profilePicture = profilePicturePart.getInputStream().readAllBytes();
+        }
+
+
+        if (!username.isEmpty() && !username.equals(user.getUsername())) {
             user.setUsername(username);
         }
-        if (email != null && !email.isEmpty() && !email.equals(user.getEmail())) {
+        if (!email.isEmpty() && !email.equals(user.getEmail())) {
             user.setEmail(email);
         }
 
-        if (!Arrays.equals(profilePicture, user.getProfileUrl()) && !pictureUrl.isEmpty()) {
+        if (!Arrays.equals(profilePicture, user.getProfileUrl())) {
             user.setProfileUrl(profilePicture);
         }
 
-        if (currentPassword != null && !currentPassword.isEmpty() &&
-                newPassword != null && !newPassword.isEmpty()) {
+        if (!currentPassword.isEmpty() && !newPassword.isEmpty()) {
 
             if (!PasswordUtil.verifyPassword(currentPassword, user.getPassword())) {
                 out.println("<h1 style='color: red'>Current password is incorrect!</h1>");

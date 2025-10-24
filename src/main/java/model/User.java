@@ -22,6 +22,8 @@ public class User extends BaseEntity<Long> implements Serializable {
     private String username;
     private String email;
     private String password;
+
+    @Lob
     private byte[] profileUrl;
 
     @Enumerated(value = EnumType.STRING)

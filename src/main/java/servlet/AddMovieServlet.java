@@ -2,10 +2,8 @@ package servlet;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.*;
 import model.Movie;
 import model.Role;
 import model.User;
@@ -18,6 +16,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 
+
+@MultipartConfig(
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 10,
+        fileSizeThreshold = 1024 * 1024
+)
 public class AddMovieServlet extends HttpServlet {
     private MovieRepository movieRepository;
     private MovieService movieService;
@@ -223,7 +227,7 @@ public class AddMovieServlet extends HttpServlet {
         out.println("        <h1>Movies</h1>");
         out.println("        <div class='subtitle'>Add Movie</div>");
 
-        out.println("        <form action='" + request.getContextPath() + "/add-movie' method='post'");
+        out.println("        <form action='" + request.getContextPath() + "/add-movie' method='post' enctype='multipart/form-data'");
 
         out.println("            <div class='form-section'>");
         out.println("                <h3>Title</h3>");
@@ -318,20 +322,32 @@ public class AddMovieServlet extends HttpServlet {
             return;
         }
 
-        String title = req.getParameter("title");
-        String description = req.getParameter("description");
-        String releaseDate = req.getParameter("releaseDate");
-        LocalDate date = LocalDate.parse(releaseDate);
-        String genre = req.getParameter("genre");
-        String ratingStr = req.getParameter("rating");
-        Double rating = Double.parseDouble(ratingStr);
-        String durationStr = req.getParameter("duration");
-        Integer duration = Integer.parseInt(durationStr);
-        String pictureUrl = req.getParameter("pictureUrl");
-        byte[] moviePicture = pictureUrl.getBytes();
+
+        Part titlePart = req.getPart("title");
+        Part descriptionPart = req.getPart("description");
+        Part releaseDatePart = req.getPart("releaseDate");
+        Part genrePart = req.getPart("genre");
+        Part ratingPart = req.getPart("rating");
+        Part durationPart = req.getPart("duration");
+        Part picturePart = req.getPart("pictureUrl");
+
+        String title = new String(titlePart.getInputStream().readAllBytes(), "UTF-8");
+        String description = new String(descriptionPart.getInputStream().readAllBytes(), "UTF-8");
+        String releaseDate = new String(releaseDatePart.getInputStream().readAllBytes(), "UTF-8");
+        String genre = new String(genrePart.getInputStream().readAllBytes(), "UTF-8");
+        String rating = new String(ratingPart.getInputStream().readAllBytes(), "UTF-8");
+        String duration = new String(durationPart.getInputStream().readAllBytes(), "UTF-8");
 
 
-        movieService.saveOrUpdate(Movie.builder().title(title).description(description).releaseDate(date).Genre(genre).rating(rating).Duration(duration).moviePicture(moviePicture).build());
+        byte[] moviePicture = null;
+        if (picturePart != null && picturePart.getSize() > 0) {
+            moviePicture = picturePart.getInputStream().readAllBytes();
+        }
+
+
+
+
+        movieService.saveOrUpdate(Movie.builder().title(title).description(description).releaseDate(LocalDate.parse(releaseDate)).Genre(genre).rating(Double.parseDouble(rating)).Duration(Integer.parseInt(duration)).moviePicture(moviePicture).build());
         resp.sendRedirect(req.getContextPath() + "/admin");
     }
 }

@@ -24,6 +24,8 @@ public class Movie extends BaseEntity<Long> implements Serializable {
     private Integer Duration;
     private LocalDate releaseDate;
     private Double rating;
+
+    @Lob
     private byte[] moviePicture;
 
     @ToString.Exclude

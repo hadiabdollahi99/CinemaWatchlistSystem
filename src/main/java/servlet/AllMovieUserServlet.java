@@ -102,6 +102,26 @@ public class AllMovieUserServlet extends HttpServlet {
         out.println("            border-bottom: 2px solid #f0f0f0;");
         out.println("            padding-bottom: 10px;");
         out.println("        }");
+        out.println("        .movie-poster {");
+        out.println("            width: 150px;");
+        out.println("            height: 220px;");
+        out.println("            object-fit: cover;");
+        out.println("            border-radius: 6px;");
+        out.println("            flex-shrink: 0;");
+        out.println("        }");
+        out.println("        .default-poster {");
+        out.println("            width: 150px;");
+        out.println("            height: 220px;");
+        out.println("            background: #e9ecef;");
+        out.println("            border-radius: 6px;");
+        out.println("            display: flex;");
+        out.println("            align-items: center;");
+        out.println("            justify-content: center;");
+        out.println("            color: #6c757d;");
+        out.println("            font-size: 14px;");
+        out.println("            text-align: center;");
+        out.println("            flex-shrink: 0;");
+        out.println("        }");
         out.println("        .movie-meta {");
         out.println("            color: #666;");
         out.println("            margin-bottom: 15px;");
@@ -192,6 +212,14 @@ public class AllMovieUserServlet extends HttpServlet {
         } else {
             for (Movie movie : movies) {
                 out.println("    <div class='movie-card'>");
+                if (movie.getProfilePictureBase64() != null) {
+                    out.println("        <img src='data:image/jpeg;base64," + movie.getProfilePictureBase64() + "' " +
+                            "alt='" + movie.getTitle() + "' class='movie-poster'>");
+                } else {
+                    out.println("        <div class='default-poster'>");
+                    out.println("            No Poster<br>Available");
+                    out.println("        </div>");
+                }
                 out.println("        <h2 class='movie-title'>" + movie.getTitle() + "</h2>");
 
                 out.println("        <div class='movie-meta'>");

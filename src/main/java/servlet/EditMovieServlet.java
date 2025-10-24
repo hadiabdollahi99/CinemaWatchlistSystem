@@ -2,10 +2,8 @@ package servlet;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.*;
 import model.Movie;
 import model.Role;
 import model.User;
@@ -23,6 +21,12 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Arrays;
 
+
+@MultipartConfig(
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 10,
+        fileSizeThreshold = 1024 * 1024
+)
 public class EditMovieServlet extends HttpServlet {
     private MovieRepository movieRepository;
     private UserMovieRepository userMovieRepository;
@@ -273,7 +277,7 @@ public class EditMovieServlet extends HttpServlet {
         out.println("        <h1>Edit Movie</h1>");
         out.println("        <div class='subtitle'>Update Movie Information</div>");
 
-        out.println("        <form action='" + request.getContextPath() + "/edit-movie' method='post'");
+        out.println("        <form action='" + request.getContextPath() + "/edit-movie' method='post' enctype='multipart/form-data'");
         out.println("            <input type='hidden' name='movie_ID' value='" + movie.getId() + "'>");
         out.println("            <div class='form-section'>");
         out.println("                <h3>Title</h3>");
@@ -400,42 +404,52 @@ public class EditMovieServlet extends HttpServlet {
         }
 
 
-        String title = req.getParameter("title");
+        Part titlePart = req.getPart("title");
+        Part descriptionPart = req.getPart("description");
+        Part releaseDatePart = req.getPart("releaseDate");
+        Part genrePart = req.getPart("genre");
+        Part ratingPart = req.getPart("rating");
+        Part durationPart = req.getPart("duration");
+        Part picturePart = req.getPart("pictureUrl");
+
+        String title = new String(titlePart.getInputStream().readAllBytes(), "UTF-8");
         Movie movie = movieService.findByTitle(title);
-        String description = req.getParameter("description");
-        String releaseDate = req.getParameter("releaseDate");
-        LocalDate date = LocalDate.parse(releaseDate);
-        String genre = req.getParameter("genre");
-        String ratingStr = req.getParameter("rating");
-        Double rating = Double.parseDouble(ratingStr);
-        String durationStr = req.getParameter("duration");
-        Integer duration = Integer.parseInt(durationStr);
-        String pictureUrl = req.getParameter("pictureUrl");
-        byte[] moviePicture = pictureUrl.getBytes();
+
+        String description = new String(descriptionPart.getInputStream().readAllBytes(), "UTF-8");
+        String releaseDate = new String(releaseDatePart.getInputStream().readAllBytes(), "UTF-8");
+        String genre = new String(genrePart.getInputStream().readAllBytes(), "UTF-8");
+        String rating = new String(ratingPart.getInputStream().readAllBytes(), "UTF-8");
+        String duration = new String(durationPart.getInputStream().readAllBytes(), "UTF-8");
+
+
+        byte[] moviePicture = null;
+        if (picturePart != null && picturePart.getSize() > 0) {
+            moviePicture = picturePart.getInputStream().readAllBytes();
+        }
 
 
         if (movie != null) {
-            if (title != null && !title.isEmpty()) {
+            if (!title.isEmpty()) {
                 movie.setTitle(title);
             }
-            if (description != null) {
+            if (!description.isEmpty()) {
                 movie.setDescription(description);
             }
-            if (genre != null && !genre.isEmpty()) {
+            if (!genre.isEmpty()) {
                 movie.setGenre(genre);
             }
-            if (!durationStr.isEmpty()) {
-                movie.setDuration(duration);
+            if (!duration.isEmpty()) {
+                movie.setDuration(Integer.parseInt(duration));
             }
             if (!releaseDate.isEmpty()) {
-                movie.setReleaseDate(date);
+                movie.setReleaseDate(LocalDate.parse(releaseDate));
             }
-            if (!ratingStr.isEmpty()) {
-                movie.setRating(rating);
+            if (!rating.isEmpty()) {
+                movie.setRating(Double.parseDouble(rating));
             }
 
-            if (!Arrays.equals(moviePicture, movie.getMoviePicture()) && !pictureUrl.isEmpty()) {
-                user.setProfileUrl(moviePicture);
+            if (!Arrays.equals(moviePicture, movie.getMoviePicture())) {
+                movie.setMoviePicture(moviePicture);
             }
         }
 

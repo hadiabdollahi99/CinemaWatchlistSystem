@@ -50,6 +50,10 @@ public class EditMovieServlet extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null){
+            response.sendRedirect(request.getContextPath()+"/login");
+            return;
+        }
 
         User user = (User) session.getAttribute("user");
         if (user == null || !user.getRole().equals(Role.ADMIN)) {

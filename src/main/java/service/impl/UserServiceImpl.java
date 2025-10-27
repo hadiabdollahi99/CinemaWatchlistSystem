@@ -1,5 +1,6 @@
 package service.impl;
 
+import jakarta.persistence.NoResultException;
 import model.User;
 import repository.UserRepository;
 import service.UserService;
@@ -17,6 +18,6 @@ public class UserServiceImpl extends BaseServiceImpl<Long, User, UserRepository>
         Optional<User> userOptional = baseRepository.findByUserName(userName);
         if (userOptional.isPresent())
             return userOptional.get();
-        throw new IllegalArgumentException("User with this username not Found!");
+        throw new NoResultException("User with this username not Found!");
     }
 }

@@ -7,6 +7,7 @@ import util.EntityManagerProvider;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class UserMovieRepositoryImpl extends BaseRepositoryImpl<Long, UserMovie> implements UserMovieRepository {
     @Override
@@ -27,10 +28,10 @@ public class UserMovieRepositoryImpl extends BaseRepositoryImpl<Long, UserMovie>
     }
 
     @Override
-    public List<UserMovie> findByUsernameId(Long userId) {
+    public List<Movie> findMovieByUsernameId(Long userId) {
         return EntityManagerProvider
                 .getEntityManager()
-                .createQuery("select u from UserMovie u where u.user.id = :userId", UserMovie.class)
+                .createQuery("select um.movie from UserMovie um where um.user.id = :userId", Movie.class)
                 .setParameter("userId", userId)
                 .getResultList();
     }

@@ -1,5 +1,6 @@
 package service.impl;
 
+import model.Movie;
 import model.UserMovie;
 import repository.UserMovieRepository;
 import service.UserMovieService;
@@ -25,7 +26,7 @@ public class UserMovieServiceImpl extends BaseServiceImpl<Long, UserMovie, UserM
     }
 
     @Override
-    public List<UserMovie> findByUsernameId(Long userId) {
-        return userMovieRepository.findByUsernameId(userId);
+    public List<Movie> findMovieByUsernameId(Long userId) {
+        return userMovieRepository.findMovieByUsernameId(userId);
     }
 }

@@ -11,12 +11,4 @@ public class MovieServiceImpl extends BaseServiceImpl<Long, Movie, MovieReposito
     public MovieServiceImpl(MovieRepository baseRepository) {
         super(baseRepository);
     }
-
-    @Override
-    public Movie findByTitle(String title) {
-        Optional<Movie> movieOptional = baseRepository.findByTitle(title);
-        if (movieOptional.isPresent())
-            return movieOptional.get();
-        throw new IllegalArgumentException("Movie with this title not found!");
-    }
 }

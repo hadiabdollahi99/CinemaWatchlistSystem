@@ -13,12 +13,4 @@ public class MovieRepositoryImpl extends BaseRepositoryImpl<Long, Movie> impleme
     public Class<Movie> getEntityClass() {
         return Movie.class;
     }
-
-    @Override
-    public Optional<Movie> findByTitle(String title) {
-        EntityManager em = EntityManagerProvider.getEntityManager();
-        Movie movie = em.createQuery("select m from Movie m where m.title = :title", Movie.class)
-                .setParameter("title",title).getSingleResult();
-        return Optional.of(movie);
-    }
 }

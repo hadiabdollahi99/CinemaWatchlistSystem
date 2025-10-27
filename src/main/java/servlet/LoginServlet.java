@@ -1,5 +1,6 @@
 package servlet;
 
+import jakarta.persistence.NoResultException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -18,18 +19,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class LoginServlet extends HttpServlet {
-    private UserRepository userRepository;
     private UserService userService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        userRepository = new UserRepositoryImpl();
+        UserRepository userRepository = new UserRepositoryImpl();
         userService = new UserServiceImpl(userRepository);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect(req.getContextPath()+"/login.html");
+        resp.sendRedirect(req.getContextPath()+"/login.jsp");
     }
 
     @Override
@@ -41,8 +41,8 @@ public class LoginServlet extends HttpServlet {
         User user;
         try {
             user = userService.findByUserName(username);
-        }catch (IllegalArgumentException e){
-            writer.println("<h1 style=\"color:red\">"+e.getMessage()+"</h1>");
+        }catch (NoResultException e){
+            writer.println("<h1 style=\"color:red\">This username and password cannot find!</h1>");
             return;
         }
 
@@ -56,8 +56,9 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("user",user);
             resp.sendRedirect(req.getContextPath()+"/admin");
+            return;
         }
 
-
+        writer.println("<h1 style=\"color:orange\">This username or password cannot find!</h1>");
     }
 }

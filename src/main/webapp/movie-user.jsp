@@ -41,7 +41,8 @@
         for (Movie movie : movies) {
         %>
 
-    <div class='movie-card'>
+    <div class='movie-card' style='cursor: pointer;'
+         onclick='window.location="<%=request.getContextPath() + "/movie-details?id=" + movie.getId()%>"'>
         <%
             if (movie.getProfilePictureBase64() != null) {
         %>

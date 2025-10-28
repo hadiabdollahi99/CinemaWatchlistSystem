@@ -86,8 +86,23 @@
             %>
             <div class='comment'>
                 <div class='comment-header'>
+                    <div class='user-avatar'>
+                        <%
+                            if (comment.getUser().getProfilePictureBase64() != null) {
+                        %>
+                        <img src='data:image/jpeg;base64,<%=comment.getUser().getProfilePictureBase64()%>' alt='<%=comment.getUser().getUsername()%>' class='avatar-img'>
+                        <%
+                        } else {
+                        %>
+                        <div class='default-avatar'><%=comment.getUser().getUsername()%></div>
+                        <%
+                            }
+                        %>
+                    </div>
+                    <div class='user-info'>
                     <span class='comment-author'><%=comment.getUser().getUsername()%> </span>
                     <span class='comment-date'> <%=comment.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString().replace('Z', ' ').replace('T', ' ')%></span>
+                </div>
                 </div>
                 <div class='comment-content'><%=comment.getContent()%>
                 </div>

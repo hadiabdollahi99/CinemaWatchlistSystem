@@ -83,12 +83,10 @@ public class MovieDetailsServlet extends HttpServlet {
 
 
         if (movie != null && user != null) {
-            // Create new comment
             Comment comment = new Comment(commentContent.trim(), user, movie);
             commentService.saveOrUpdate(comment);
         }
 
-        // Redirect back to movie details page
         response.sendRedirect(request.getContextPath() + "/movie-details?id=" + movieId);
 
     }

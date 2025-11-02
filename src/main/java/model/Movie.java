@@ -32,7 +32,7 @@ public class Movie extends BaseEntity<Long> implements Serializable {
     @OneToMany(mappedBy = "movie", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     private List<UserMovie> userMovies = new ArrayList<>();
 
-
+    
     public String getProfilePictureBase64() {
         if (moviePicture != null && moviePicture.length > 0) {
             return Base64.getEncoder().encodeToString(moviePicture);

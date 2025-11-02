@@ -34,6 +34,9 @@
                 <a href='watchlist'>Watchlist</a>
             </div>
             <div class="link-card">
+                <a href="search-movies">Search Movies</a>
+            </div>
+            <div class="link-card">
                 <a href='logout'>Logout</a>
             </div>
         </div>

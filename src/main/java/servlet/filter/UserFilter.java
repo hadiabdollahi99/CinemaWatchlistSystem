@@ -9,7 +9,7 @@ import model.User;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/edit-profile/*", "/movie-user/*", "/watchlist/*", "/movie-details/*"})
+@WebFilter(urlPatterns = {"/edit-profile/*", "/movie-user/*", "/watchlist/*", "/movie-details/*", "/search-movies/*"})
 public class UserFilter implements Filter {
 
     @Override

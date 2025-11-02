@@ -14,6 +14,9 @@
     <%
         Movie movie = (Movie) request.getAttribute("movie");
         List<Comment> comments = (List<Comment>) request.getAttribute("comments");
+        int ratingCount = (int) request.getAttribute("ratingCount");
+        double averageRating = (double) request.getAttribute("averageRating");
+        String ratingStar = (String) request.getAttribute("ratingStar");
     %>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
@@ -46,25 +49,55 @@
                 <h1 class='movie-title'><%=movie.getTitle()%>
                 </h1>
                 <div class='movie-meta'>
-                    <strong><%=movie.getGenre()%>
-                    </strong>
-                    <%=movie.getReleaseDate() != null ? movie.getReleaseDate().toString() : "N/A"%>;
-                    <span class='rating'><%=movie.getRating() %>/10</span>
-                </div>
-                <div class='movie-meta'>
+                    <strong>Genre: <%=movie.getGenre()%>
+                    </strong> •
+                    Release Date: <%=movie.getReleaseDate() != null ? movie.getReleaseDate().toString() : "N/A"%> •
                     Duration: <%=movie.getDuration() != null ? movie.getDuration() + " minutes" : "N/A"%>
                 </div>
-                <p class='movie-description'><%=movie.getDescription()%>"</p>
+                <p class='movie-description'><%=movie.getDescription()%>
+                </p>
             </div>
         </div>
     </div>
 
+    <div class='rating-section'>
+        <div class='average-rating'>
+            Average Rating: <%=String.format("%.1f", averageRating) %>/5
+            <span class='overall-rating-badge'>Based on <%=ratingCount%> review<%=ratingCount != 1 ? "s" : ""%></span>
+        </div>
+        <div class='rating-count'>
+            <%
+                if (ratingCount > 0) {
+            %>
+            <%=ratingStar%>
+            <%
+            } else {
+            %>
+            No ratings yet.
+            <%
+                }
+            %>
+        </div>
+    </div>
 
     <div class='comments-section'>
         <h2>Comments</h2>
         <div class='comment-form'>
             <form action='<%=request.getContextPath() + "/movie-details"%>' method='post'>
                 <input type='hidden' name='movieId' value='<%=movie.getId()%>'>
+
+                <div class='rating-input'>
+                    <label><strong>Your Rating (1-5):</strong></label><br>
+                    <select name='rating' class='rating-select' required>
+                        <option value=''>Select rating</option>
+                        <option value='1'>1 - Poor</option>
+                        <option value='2'>2 - Fair</option>
+                        <option value='3'>3 - Good</option>
+                        <option value='4'>4 - Very Good</option>
+                        <option value='5'>5 - Excellent</option>
+                    </select>
+                </div>
+
                 <textarea name='comment' placeholder='Share your thoughts about this movie...' required></textarea>
                 <button type='submit' class='btn btn-success' style='margin-top: 10px;'>Post Comment</button>
             </form>
@@ -90,22 +123,33 @@
                         <%
                             if (comment.getUser().getProfilePictureBase64() != null) {
                         %>
-                        <img src='data:image/jpeg;base64,<%=comment.getUser().getProfilePictureBase64()%>' alt='<%=comment.getUser().getUsername()%>' class='avatar-img'>
+                        <img src='data:image/jpeg;base64,<%=comment.getUser().getProfilePictureBase64()%>'
+                             alt='<%=comment.getUser().getUsername()%>' class='avatar-img'>
                         <%
                         } else {
                         %>
-                        <div class='default-avatar'><%=comment.getUser().getUsername()%></div>
+                        <div class='default-avatar'><%=comment.getUser().getUsername()%>
+                        </div>
                         <%
                             }
                         %>
                     </div>
+
                     <div class='user-info'>
-                    <span class='comment-author'><%=comment.getUser().getUsername()%> </span>
-                    <span class='comment-date'> <%=comment.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString().replace('Z', ' ').replace('T', ' ')%></span>
+                        <span class='comment-author'><%=comment.getUser().getUsername()%> </span>
+                        <span class='comment-date'> <%=comment.getCreatedAt().truncatedTo(ChronoUnit.SECONDS).toString().replace('Z', ' ').replace('T', ' ')%></span>
+                        <%
+                            if (comment.getRating() != null) {
+                        %>
+                        <div class='user-rating'>
+                            <span class='rating-badge'>Rating: <%=comment.getRating()%>/5</span>
+                        </div>
+                        <%
+                            }
+                        %>
+                    </div>
                 </div>
-                </div>
-                <div class='comment-content'><%=comment.getContent()%>
-                </div>
+                <div class='comment-content'><%=comment.getContent()%></div>
             </div>
             <%
                 }

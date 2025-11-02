@@ -1,9 +1,9 @@
 package repository;
 
 import model.Movie;
-import model.User;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface MovieRepository extends BaseRepository<Long, Movie>{
+    List<Movie> searchMovieByGenreOTitle (String searchQuery);
 }

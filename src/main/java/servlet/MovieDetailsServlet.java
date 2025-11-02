@@ -24,15 +24,13 @@ import java.util.List;
 
 @WebServlet("/movie-details")
 public class MovieDetailsServlet extends HttpServlet {
-    private MovieRepository movieRepository;
-    private CommentRepository commentRepository;
     private MovieService movieService;
     private CommentService commentService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        this.movieRepository = new MovieRepositoryImpl();
-        this.commentRepository = new CommentRepositoryImpl();
+        MovieRepository movieRepository = new MovieRepositoryImpl();
+        CommentRepository commentRepository = new CommentRepositoryImpl();
         this.movieService = new MovieServiceImpl(movieRepository);
         this.commentService = new CommentServiceImpl(commentRepository);
     }
@@ -48,7 +46,6 @@ public class MovieDetailsServlet extends HttpServlet {
         }
 
         Long movieId = Long.parseLong(movieIdStr);
-
         Movie movie = movieService.findById(movieId).orElse(null);
         if (movie == null) {
             response.sendRedirect(request.getContextPath() + "/movie-user");
@@ -57,8 +54,15 @@ public class MovieDetailsServlet extends HttpServlet {
 
         List<Comment> comments = commentService.findCommentByMovieId(movieId);
 
+        int ratingCount = movieService.getRatingCount(movieId);
+        double averageRating = movieService.getAverageRating(movieId);
+        String ratingStar = movieService.getRatingStar(movieId);
+
         request.setAttribute("movie",movie);
         request.setAttribute("comments",comments);
+        request.setAttribute("ratingCount",ratingCount);
+        request.setAttribute("averageRating",averageRating);
+        request.setAttribute("ratingStar",ratingStar);
         request.getRequestDispatcher("movie-details.jsp").forward(request,response);
     }
 
@@ -68,6 +72,7 @@ public class MovieDetailsServlet extends HttpServlet {
 
         String movieIdStr = request.getParameter("movieId");
         String commentContent = request.getParameter("comment");
+        String ratingStr = request.getParameter("rating");
 
         if (movieIdStr == null || commentContent == null || commentContent.trim().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/movie-details?id=" + movieIdStr);
@@ -77,14 +82,15 @@ public class MovieDetailsServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
 
-
+        Integer rating = (ratingStr != null && !ratingStr.isEmpty()) ? Integer.parseInt(ratingStr) : null;
         Long movieId = Long.parseLong(movieIdStr);
         Movie movie = movieService.findById(movieId).orElse(null);
 
 
         if (movie != null && user != null) {
-            Comment comment = new Comment(commentContent.trim(), user, movie);
+            Comment comment = Comment.builder().content(commentContent.trim()).rating(rating).user(user).movie(movie).build();
             commentService.saveOrUpdate(comment);
+            movieService.updateMovieRating(movie , rating);
         }
 
         response.sendRedirect(request.getContextPath() + "/movie-details?id=" + movieId);

@@ -18,6 +18,8 @@ public class Comment extends BaseEntity<Long> implements Serializable {
     @Lob
     private String content;
 
+    private Integer rating;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

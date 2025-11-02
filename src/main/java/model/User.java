@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-//<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..." alt="Test Image">
 
 @Builder
 @Setter
@@ -40,6 +39,4 @@ public class User extends BaseEntity<Long> implements Serializable {
         return null;
     }
 
-
 }
-

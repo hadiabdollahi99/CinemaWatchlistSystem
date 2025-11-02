@@ -15,12 +15,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class DeleteUserMovieServlet extends HttpServlet {
-    private UserMovieRepository userMovieRepository;
     private UserMovieService userMovieService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        this.userMovieRepository = new UserMovieRepositoryImpl();
+        UserMovieRepository userMovieRepository = new UserMovieRepositoryImpl();
         this.userMovieService = new UserMovieServiceImpl(userMovieRepository);
     }
 

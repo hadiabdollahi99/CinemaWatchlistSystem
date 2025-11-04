@@ -84,13 +84,13 @@ public class MovieDetailsServlet extends HttpServlet {
 
         Integer rating = (ratingStr != null && !ratingStr.isEmpty()) ? Integer.parseInt(ratingStr) : null;
         Long movieId = Long.parseLong(movieIdStr);
-        Movie movie = movieService.findById(movieId).orElse(null);
+        Movie movie = movieService.findById(movieId).orElse( null);
 
 
         if (movie != null && user != null) {
             Comment comment = Comment.builder().content(commentContent.trim()).rating(rating).user(user).movie(movie).build();
             commentService.saveOrUpdate(comment);
-            movieService.updateMovieRating(movie , rating);
+            movieService.updateMovieRating(movie);
         }
 
         response.sendRedirect(request.getContextPath() + "/movie-details?id=" + movieId);

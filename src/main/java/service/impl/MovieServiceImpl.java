@@ -43,7 +43,7 @@ public class MovieServiceImpl extends BaseServiceImpl<Long, Movie, MovieReposito
 
 
     @Override
-    public void updateMovieRating(Movie movie, Integer rating) {
+    public void updateMovieRating(Movie movie) {
         double averageRating = getAverageRating(movie.getId());
         movie.setRating(averageRating * 2);
         movieRepository.saveOrUpdate(movie);
@@ -59,7 +59,12 @@ public class MovieServiceImpl extends BaseServiceImpl<Long, Movie, MovieReposito
                     .setParameter("movieId", movieId)
                     .setParameter("rating", i)
                     .getSingleResult();
-            ratingStar.append(i).append("★: ").append(count != null ? count : 0).append("  ");
+            if (i != 5){
+                ratingStar.append(i).append("★: ").append(count != null ? count : 0).append(",  ");
+                continue;
+            }
+            ratingStar.append(i).append("★: ").append(count != null ? count : 0).append("   ");
+
         }
         return ratingStar.toString().trim();
     }
